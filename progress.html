@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>React Smooth Progress Bars</title>
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    .progress-container {
+      margin-top: 20px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: #76c7c0;
+      width: 0%;
+      transition: width 0.05s linear;
+    }
+
+    .progress-label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // A single progress bar that fills over 2000ms
+    function ProgressBar() {
+      const [progress, setProgress] = useState(0);
+
+      useEffect(() => {
+        const startTime = Date.now();
+        const duration = 2000; // 2000ms = 2s
+
+        const interval = setInterval(() => {
+          const elapsed = Date.now() - startTime;
+          const percent = Math.min((elapsed / duration) * 100, 100);
+          setProgress(percent);
+
+          if (percent >= 100) {
+            clearInterval(interval);
+          }
+        }, 50); // update every 50ms
+
+        return () => clearInterval(interval);
+      }, []);
+
+      return (
+        <div className="progress-bar">
+          <div
+            className="progress-fill"
+            style={{ width: `${progress}%` }}
+          ></div>
+          <div className="progress-label">{Math.round(progress)}%</div>
+        </div>
+      );
+    }
+
+    // Main App
+    function App() {
+      const [bars, setBars] = useState([]);
+
+      const handleAddBar = () => {
+        setBars(prev => [...prev, Date.now()]);
+      };
+
+      return (
+        <div style={{ maxWidth: '500px', margin: '0 auto' }}>
+          <button onClick={handleAddBar}>Add</button>
+          <div className="progress-container">
+            {bars.map((id) => (
+              <ProgressBar key={id} />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Note Boxes with Add & Delete</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px;
+      background-color: #f0f2f5;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+    }
+
+    #boxContainer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      max-width: 980px;
+    }
+
+    .note-box, .add-btn-box {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      background-color: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      box-sizing: border-box;
+      cursor: pointer;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .note-box {
+      cursor: text;
+    }
+
+    .note-content {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .add-btn {
+      font-size: 48px;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: 0.2s ease;
+    }
+
+    .add-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="boxContainer">
+    <div class="add-btn-box" onclick="addNewBox(this)">
+      <button class="add-btn">+</button>
+    </div>
+  </div>
+
+  <script>
+    function createNoteBox() {
+      const box = document.createElement("div");
+      box.className = "note-box";
+
+      // Editable content area
+      const content = document.createElement("div");
+      content.className = "note-content";
+      content.setAttribute("contenteditable", "true");
+      content.setAttribute("spellcheck", "false");
+      content.setAttribute("placeholder", "Type here...");
+
+      // Add new box when outer box is clicked (but not the content or delete)
+      box.addEventListener("click", function (e) {
+        if (e.target === box) {
+          addNewBox(box);
+        }
+      });
+
+      // Delete button
+      const delBtn = document.createElement("button");
+      delBtn.className = "delete-btn";
+      delBtn.innerText = "×";
+      delBtn.onclick = function (e) {
+        e.stopPropagation(); // prevent box click
+        box.remove();
+      };
+
+      box.appendChild(content);
+      box.appendChild(delBtn);
+      return box;
+    }
+
+    function addNewBox(afterElement) {
+      const container = document.getElementById("boxContainer");
+      const newBox = createNoteBox();
+      container.insertBefore(newBox, afterElement.nextSibling);
+
+      // Focus the typing area inside the new box
+      newBox.querySelector(".note-content").focus();
+    }
+  </script>
+
+</body>
+</html>
